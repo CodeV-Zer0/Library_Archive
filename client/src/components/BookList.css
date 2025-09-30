@@ -1,0 +1,38 @@
+.book-list-container {
+  font-family: sans-serif;
+  width: 100%;
+}
+
+.book-list-container h2 {
+  color: white;;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 7px;
+  text-align: centre;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: #13a1c4;
+  font-weight: bold;
+  color: rgb(236, 226, 226);
+}
+table tbody tr {
+  background-color: #333; /* A dark grey color */
+  color: white;           /* Set the text color to white for readability */
+}
+
+
+table tbody tr:hover {
+  background-color:   #0a0a0a;
+}

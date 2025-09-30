@@ -1,0 +1,31 @@
+.app-sidebar {
+  width: 220px;
+  background-color: #151515;
+  padding: 20px;
+  height: 100vh; /* Full height */
+  box-shadow: 2px 0 5px rgba(220, 147, 147, 0.1);
+}
+
+.app-sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.app-sidebar nav ul li {
+  margin-bottom: 15px;
+}
+
+.app-sidebar nav ul li a {
+  text-decoration: none;
+  color: #f0e9e9;
+  font-size: 1.1rem;
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.app-sidebar nav ul li a:hover {
+  background-color: #333232;
+}

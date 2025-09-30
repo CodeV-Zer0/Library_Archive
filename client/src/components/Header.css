@@ -1,0 +1,10 @@
+.app-header {
+  background-color: #141414;
+  padding: 20px;
+  color: rgb(185, 189, 191);
+  text-align: left;
+  font-size: 0.6rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: cursive;
+  font-weight: bold;
+}

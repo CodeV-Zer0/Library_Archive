@@ -1,0 +1,116 @@
+/* client/src/components/Login.css */
+.login-page-full {
+    min-height: 100vh;
+    background-color: #1a1a1a;
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the start, not center */
+    align-items: center;
+    position: relative; /* Essential for positioning the background image */
+    overflow: hidden; /* Hide overflow if image is too large */
+}
+
+.bookshelf-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1350&q=80'); /* <-- Path to your image */
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.4) grayscale(0.2); /* Darken and slightly desaturate the image */
+    z-index: 0; /* Ensures it stays in the background */
+}
+
+/* Make sure the header is above the background */
+.app-main-header {
+    z-index: 1; 
+    position: relative; /* Bring it above the background */
+    width: 100%; /* Ensure it spans full width */
+    
+}
+
+
+.login-container-full {
+    position: relative; /* Bring the form container above the background */
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.7); /* Slightly transparent dark background */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    margin-top: 50px; /* Space below the header */
+    margin-bottom: 50px; /* Space from the bottom */
+}
+
+.login-container-full h2 {
+    font-size: 2.2em;
+    color: #4CAF50; /* Green heading */
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1em;
+    color: #cccccc;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: white;
+    font-size: 1em;
+}
+
+.login-container-full button {
+    width: 100%;
+    padding: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.login-container-full button:hover {
+    background-color: #5cb85c;
+}
+
+.response-message {
+    margin-top: 20px;
+    color: #FFC107;
+    font-weight: bold;
+}
+
+.register-link, .admin-link {
+    margin-top: 25px;
+    font-size: 0.9em;
+}
+
+.register-link a, .admin-link a {
+    color: #CDDC39;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover, .admin-link a:hover {
+    text-decoration: underline;
+}
