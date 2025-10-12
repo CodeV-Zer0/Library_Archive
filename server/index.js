@@ -273,3 +273,44 @@ app.get('/api/receipts', authenticateToken, isAdmin, async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running successfully on http://localhost:${port}`);
 });
+// --- Search Routes ---
+
+// GET endpoint to search for books by title or author
+app.get('/api/books/search', authenticateToken, async (req, res) => {
+    try {
+        const { q } = req.query; // Get the search query from the URL (e.g., /api/books/search?q=data)
+        const searchQuery = `%${q}%`; // Add wildcards for partial matching
+        
+        const sql = 'SELECT * FROM Books WHERE Title LIKE ? OR Author LIKE ?';
+        const [rows] = await db.query(sql, [searchQuery, searchQuery]);
+        
+        res.json(rows);
+    } catch (err){
+        console.error("Error searching books:", err);
+        res.status(500).send("Database error during search.");
+    }
+});
+
+// GET endpoint to search for students by name or register number
+app.get('/api/students/search', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { q } = req.query;
+        
+        // --- ADD THIS LOG ---
+        console.log(`Received search term: "${q}"`);
+
+        const searchQuery = `%${q}%`;
+        const sql = 'SELECT * FROM Student WHERE LOWER(Name) LIKE LOWER(?) OR LOWER(Register_Number) LIKE LOWER(?)';
+        
+        // --- ADD THIS LOG TO SEE THE FINAL QUERY ---
+        console.log('Executing SQL Query:', db.format(sql, [searchQuery, searchQuery]));
+        
+        const [rows] = await db.query(sql, [searchQuery, searchQuery]);
+        res.json(rows);
+        
+    } catch (err) {
+        console.error("Error searching students:", err);
+        res.status(500).send("Database error during search.");
+    }
+});
+

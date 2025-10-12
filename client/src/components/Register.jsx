@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import api from '../api.js';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './Register.css'; // This will now correctly link to the CSS file below
+import './Register.css';
 
 function Register() {
     const [formData, setFormData] = useState({ username: '', password: '', role: 'student' });
@@ -12,7 +12,9 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post('http://localhost:3001/api/users/register', formData);
+            // Use the environment variable for the API URL, with a fallback for local development
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+            const res = await axios.post(`${apiUrl}/api/users/register`, formData);
             setMessage(res.data);
         } catch (err) {
             setMessage(err.response.data || 'Registration failed.');
@@ -21,12 +23,11 @@ function Register() {
 
     return (
         <div className="register-page">
-            <div className="bookshelf-bg"></div> {/* <-- Add this div for the background image */}
             <header className="app-main-header">
-                <h1>Library Archive</h1>
+                <h1>Library Management System</h1>
             </header>
             <div className="register-container">
-                <h2>Register New User</h2> {/* Changed from User */}
+                <h2>Register New User</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
@@ -53,4 +54,5 @@ function Register() {
         </div>
     );
 }
+
 export default Register;

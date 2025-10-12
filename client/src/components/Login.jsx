@@ -12,7 +12,8 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post('http://localhost:3001/api/users/login', formData);
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+            const res = await axios.post(`${apiUrl}/api/users/register`, formData);
             localStorage.setItem('token', res.data.token);
             window.location.href = '/books'; // Redirect to the main dashboard
         } catch (err) {
