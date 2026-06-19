@@ -1,26 +1,34 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import './Register.css';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../api';   // ← This line is missing!
 
-function Register() {
-    const [formData, setFormData] = useState({ username: '', password: '', role: 'student' });
+const Register = () => {
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+        role: 'student'
+    });
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
-    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        // Use the imported api (which has correct baseURL)
-        const res = await api.post('/users/register', formData);
-        setMessage(res.data);
-    } catch (err) {
-        console.error(err);
-        setMessage(err.response?.data || 'Registration failed.');
-    }
-};
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await api.post('/users/register', formData);
+            setMessage(res.data);
+            // Optional: redirect to login after successful registration
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (err) {
+            console.error(err);
+            setMessage(err.response?.data || 'Registration failed.');
+        }
+    };
 
+    // ... rest of your component (return JSX) stays the same
     return (
         <div className="register-page">
             <header className="app-main-header">
