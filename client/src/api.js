@@ -11,6 +11,8 @@ api.interceptors.request.use(
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        } else {
+            console.warn('No JWT token found in localStorage for request:', config.url);
         }
         return config;
     },
