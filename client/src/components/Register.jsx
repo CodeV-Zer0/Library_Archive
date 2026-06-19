@@ -15,18 +15,18 @@ const Register = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await api.post('/users/register', formData);
-            setMessage(res.data);
-            // Optional: redirect to login after successful registration
-            setTimeout(() => navigate('/login'), 2000);
-        } catch (err) {
-            console.error(err);
-            setMessage(err.response?.data || 'Registration failed.');
-        }
-    };
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const res = await api.post('/users/register', formData);
+        setMessage(res.data || 'Registration successful!');
+        // Auto redirect to login after success
+        setTimeout(() => navigate('/login'), 1500);
+    } catch (err) {
+        console.error(err);
+        setMessage(err.response?.data || 'Registration failed.');
+    }
+};
 
     // ... rest of your component (return JSX) stays the same
     return (
