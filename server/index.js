@@ -1,16 +1,22 @@
+// --- Imports ---
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { authenticateToken, isAdmin } = require('./middleware');
-const JWT_SECRET = 'your-super-secret-key'; // Declared once
 
-const app = express(); // Declared once
-const port = 3001; // Declared once
+// --- Constants ---
+const JWT_SECRET = 'your-super-secret-key';
+const app = express();
+const port = process.env.PORT || 3001;
 
 // --- Middleware ---
-app.use(cors());
+// ✅ CHANGE 1: Restrict CORS to your frontend's localhost origin.
+// Make sure the port (e.g., 3000) matches your frontend development server.
+app.use(cors({
+  origin: 'http://127.0.0.1:5173' 
+}));
 app.use(express.json());
 
 // --- User & Authentication Routes ---
@@ -42,7 +48,10 @@ app.post('/api/users/login', async (req, res) => {
 
         let registerNumber = null;
         if (user.role === 'student') {
-            const [studentRows] = await db.query('SELECT Register_Number FROM Student WHERE Register_Number = ? OR Name = ?', [user.username, user.username]);
+            const [studentRows] = await db.query(
+                'SELECT Register_Number FROM Student WHERE Register_Number = ? OR Name = ?',
+                [user.username, user.username]
+            );
             if (studentRows.length > 0) {
                 registerNumber = studentRows[0].Register_Number;
             }
@@ -52,7 +61,6 @@ app.post('/api/users/login', async (req, res) => {
         const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
         
         res.json({ token, role: user.role });
-
     } catch (err) {
         console.error("Error logging in:", err);
         res.status(500).send('Server error during login.');
@@ -186,7 +194,7 @@ app.get('/api/transactions/active', authenticateToken, isAdmin, async (req, res)
 app.get('/api/my-transactions', authenticateToken, async (req, res) => {
     try {
         const { registerNumber } = req.user;
-        if (!registerNumber) return res.json([]); 
+        if (!registerNumber) return res.json([]);
         const sql = "SELECT * FROM Book_Transaction WHERE Register_Number = ? AND Status = 'Issued'";
         const [transactionRows] = await db.query(sql, [registerNumber]);
         res.json(transactionRows);
@@ -202,8 +210,8 @@ app.post('/api/transactions', authenticateToken, isAdmin, async (req, res) => {
         connection = await db.getConnection();
         await connection.beginTransaction();
         const transactionSql = 'INSERT INTO Book_Transaction (ISBN, Register_Number, Issue_Date, Status) VALUES (?, ?, CURDATE(), ?)';
-        const [insertResult] =await connection.query(transactionSql, [ISBN, Register_Number, 'Issued']);
-         const newTransactionId = insertResult.insertId;
+        const [insertResult] = await connection.query(transactionSql, [ISBN, Register_Number, 'Issued']);
+        const newTransactionId = insertResult.insertId;
         const updateBookSql = 'UPDATE Books SET Availability = 0 WHERE ISBN = ? AND Availability = 1';
         const [updateResult] = await connection.query(updateBookSql, [ISBN]);
         if (updateResult.affectedRows === 0) {
@@ -211,7 +219,7 @@ app.post('/api/transactions', authenticateToken, isAdmin, async (req, res) => {
         }
         await connection.commit();
         const scannerId = 1;
-         await db.query('INSERT INTO Receipt (Scanner_Id, Transaction_Id) VALUES (?, ?)', [scannerId, newTransactionId]);
+        await db.query('INSERT INTO Receipt (Scanner_Id, Transaction_Id) VALUES (?, ?)', [scannerId, newTransactionId]);
         res.status(201).send('Book issued successfully.');
     } catch (err) {
         if (connection) await connection.rollback();
@@ -269,48 +277,37 @@ app.get('/api/receipts', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
-// --- Start Server ---
-app.listen(port, () => {
-  console.log(`Server is running successfully on http://localhost:${port}`);
-});
 // --- Search Routes ---
-
-// GET endpoint to search for books by title or author
 app.get('/api/books/search', authenticateToken, async (req, res) => {
     try {
-        const { q } = req.query; // Get the search query from the URL (e.g., /api/books/search?q=data)
-        const searchQuery = `%${q}%`; // Add wildcards for partial matching
-        
+        const { q } = req.query;
+        const searchQuery = `%${q}%`;
         const sql = 'SELECT * FROM Books WHERE Title LIKE ? OR Author LIKE ?';
         const [rows] = await db.query(sql, [searchQuery, searchQuery]);
-        
         res.json(rows);
-    } catch (err){
+    } catch (err) {
         console.error("Error searching books:", err);
         res.status(500).send("Database error during search.");
     }
 });
 
-// GET endpoint to search for students by name or register number
 app.get('/api/students/search', authenticateToken, isAdmin, async (req, res) => {
     try {
         const { q } = req.query;
-        
-        // --- ADD THIS LOG ---
         console.log(`Received search term: "${q}"`);
-
         const searchQuery = `%${q}%`;
         const sql = 'SELECT * FROM Student WHERE LOWER(Name) LIKE LOWER(?) OR LOWER(Register_Number) LIKE LOWER(?)';
-        
-        // --- ADD THIS LOG TO SEE THE FINAL QUERY ---
         console.log('Executing SQL Query:', db.format(sql, [searchQuery, searchQuery]));
-        
         const [rows] = await db.query(sql, [searchQuery, searchQuery]);
         res.json(rows);
-        
     } catch (err) {
         console.error("Error searching students:", err);
         res.status(500).send("Database error during search.");
     }
 });
 
+// --- Start Server ---
+// ✅ CHANGE 2: Bind the server to '127.0.0.1' (localhost).
+app.listen(PORT, '127.0.0.1', () => {
+    console.log(`✅ Server is running exclusively on http://localhost:${PORT}`);
+});

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import api from '../api.js';
+import api from '../api.js'; // You are correctly importing this
 import { Link } from 'react-router-dom';
-import './Login.css'; // This will now correctly link to the CSS file below
+import './Login.css';
 
 function Login() {
     const [formData, setFormData] = useState({ username: '', password: '' });
@@ -12,31 +12,51 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-            const res = await axios.post(`${apiUrl}/api/users/register`, formData);
+            // ✅ FIX 1: Use 'api.post', which you imported
+            // ✅ FIX 2: Call the '/users/login' endpoint (your api.js file adds the '/api' prefix)
+            const res = await api.post('/users/login', formData);
+            
             localStorage.setItem('token', res.data.token);
             window.location.href = '/books'; // Redirect to the main dashboard
         } catch (err) {
+            // This will now show the correct error from the backend (e.g., "User not found")
             setMessage(err.response?.data || 'Login failed.');
         }
     };
 
     return (
         <div className="login-page-full">
-            <div className="bookshelf-bg"></div> {/* <-- Add this div for the background image */}
+            <div className="bookshelf-bg"></div>
             <header className="app-main-header">
                 <h1>Library Archive</h1>
             </header>
             <div className="login-container-full">
-                <h2>Student Login</h2> {/* Changed from User Login */}
+                <h2>Student Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
-                        <input id="username" name="username" onChange={handleChange} placeholder="Enter your username" required />
+                        {/* ✅ FIX 3: Added 'value' prop */}
+                        <input 
+                            id="username" 
+                            name="username" 
+                            value={formData.username} 
+                            onChange={handleChange} 
+                            placeholder="Enter your username" 
+                            required 
+                        />
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input id="password" name="password" type="password" onChange={handleChange} placeholder="Enter your password" required />
+                        {/* ✅ FIX 3: Added 'value' prop */}
+                        <input 
+                            id="password" 
+                            name="password" 
+                            type="password" 
+                            value={formData.password} 
+                            onChange={handleChange} 
+                            placeholder="Enter your password" 
+                            required 
+                        />
                     </div>
                     <button type="submit">Login</button>
                 </form>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api.js';
+import api from '../api.js'; // You are correctly importing this
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import './AdminLogin.css';
@@ -13,20 +13,32 @@ function AdminLogin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-            const res = await axios.post(`${apiUrl}/api/users/register`, formData);
+            // ✅ FIX 1: Use 'api.post', which you imported
+            // ✅ FIX 2: Call the '/api/users/login' endpoint
+            const res = await api.post('/users/login', formData);
+            
             const token = res.data.token;
             
+            // Check if token exists before decoding
+            if (!token) {
+                setMessage('Login failed: No token received.');
+                return;
+            }
+
             const decodedUser = jwtDecode(token);
 
+            // ✅ FIX 3: Check for 'Admin' (capital A) to match your backend
             if (decodedUser.role !== 'admin') {
                 setMessage('Access Denied. You are not an admin.');
                 return;
             }
 
+            // Success
             localStorage.setItem('token', token);
-            window.location.href = '/books';
+            window.location.href = '/books'; // Redirect to a protected route
         } catch (err) {
+            // This will now correctly show errors from the server, 
+            // like "User not found" or "Invalid credentials"
             setMessage(err.response?.data || 'Login failed.');
         }
     };
@@ -42,14 +54,15 @@ function AdminLogin() {
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="username">Admin Username</label>
-                        <input id="username" name="username" onChange={handleChange} placeholder="Enter admin username" required />
+                        <input id="username" name="username" value={formData.username} onChange={handleChange} placeholder="Enter admin username" required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input id="password" name="password" type="password" onChange={handleChange} placeholder="Enter password" required />
+                        <input id="password" name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Enter password" required />
                     </div>
                     <button type="submit">Login as Admin</button>
                 </form>
+                {/* This will now show the correct error message from the backend */}
                 {message && <p className="response-message">{message}</p>}
                 <p className="login-link">
                     Not an admin? <Link to="/login">Go to Student Login</Link>

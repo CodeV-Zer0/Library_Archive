@@ -14,7 +14,7 @@ function Register() {
         try {
             // Use the environment variable for the API URL, with a fallback for local development
             const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-            const res = await axios.post(`${apiUrl}/api/users/register`, formData);
+            const res = await axios.post(`${apiUrl}/users/register`, formData);
             setMessage(res.data);
         } catch (err) {
             setMessage(err.response.data || 'Registration failed.');
