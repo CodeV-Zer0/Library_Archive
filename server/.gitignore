@@ -1,6 +1,33 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Production build
+/dist
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
 .env
-node_modules
-<<<<<<< HEAD
-=======
-backup.sql
->>>>>>> 4e2ee6a (Fix API URL paths)
+.env.local
+.env.production
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# Editor directories
+.vscode/
+.idea/

@@ -44,29 +44,48 @@ app.post('/api/users/login', async (req, res) => {
     try {
         const sql = 'SELECT * FROM Users WHERE username = ?';
         const [users] = await db.query(sql, [username]);
-        if (users.length === 0) return res.status(404).send('User not found.');
+
+        if (users.length === 0) {
+            return res.status(404).send('User not found.');
+        }
 
         const user = users[0];
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).send('Invalid credentials.');
 
+        if (!isMatch) {
+            return res.status(401).send('Invalid credentials.');
+        }
+
+        // Get Register_Number only for students
         let registerNumber = null;
         if (user.role === 'student') {
             const [studentRows] = await db.query(
                 'SELECT Register_Number FROM Student WHERE Register_Number = ? OR Name = ?',
-                [user.username, user.username]
+                [username, username]
             );
             if (studentRows.length > 0) {
                 registerNumber = studentRows[0].Register_Number;
             }
         }
 
-        const tokenPayload = { id: user.id, role: user.role, username: user.username, registerNumber };
+        const tokenPayload = { 
+            id: user.id, 
+            role: user.role, 
+            username: user.username, 
+            registerNumber 
+        };
+
         const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
         
-        res.json({ token, role: user.role });
+        res.json({ 
+            token, 
+            role: user.role,
+            username: user.username,
+            registerNumber 
+        });
+
     } catch (err) {
-        console.error("Error logging in:", err);
+        console.error("Login error:", err);
         res.status(500).send('Server error during login.');
     }
 });
