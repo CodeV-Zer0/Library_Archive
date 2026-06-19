@@ -7,16 +7,20 @@ const jwt = require('jsonwebtoken');
 const { authenticateToken, isAdmin } = require('./middleware');
 
 // --- Constants ---
-const JWT_SECRET = 'your-super-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production';
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 // --- Middleware ---
-// ✅ CHANGE 1: Restrict CORS to your frontend's localhost origin.
-// Make sure the port (e.g., 3000) matches your frontend development server.
 app.use(cors({
-  origin: 'http://127.0.0.1:5173' 
+    origin: [
+        'http://localhost:5173',                    // Local development
+        'http://127.0.0.1:5173',                    // Alternative localhost
+        'https://library-archive-client.onrender.com' // ← Your Render frontend URL
+    ],
+    credentials: true
 }));
+
 app.use(express.json());
 
 // --- User & Authentication Routes ---
@@ -306,8 +310,7 @@ app.get('/api/students/search', authenticateToken, isAdmin, async (req, res) => 
     }
 });
 
-// --- Start Server ---
-// ✅ CHANGE 2: Bind the server to '127.0.0.1' (localhost).
-app.listen(PORT, '127.0.0.1', () => {
-    console.log(`✅ Server is running exclusively on http://localhost:${PORT}`);
+// --- Start Server --- (MUST be at the very end)
+app.listen(PORT, () => {
+    console.log(`✅ Server is running on port ${PORT}`);
 });

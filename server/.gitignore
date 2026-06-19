@@ -1,2 +1,6 @@
 .env
 node_modules
+<<<<<<< HEAD
+=======
+backup.sql
+>>>>>>> 4e2ee6a (Fix API URL paths)
