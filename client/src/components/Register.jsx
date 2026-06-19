@@ -9,17 +9,17 @@ function Register() {
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            // Use the environment variable for the API URL, with a fallback for local development
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-            const res = await axios.post(`${apiUrl}/users/register`, formData);
-            setMessage(res.data);
-        } catch (err) {
-            setMessage(err.response.data || 'Registration failed.');
-        }
-    };
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        // Use the imported api (which has correct baseURL)
+        const res = await api.post('/users/register', formData);
+        setMessage(res.data);
+    } catch (err) {
+        console.error(err);
+        setMessage(err.response?.data || 'Registration failed.');
+    }
+};
 
     return (
         <div className="register-page">
