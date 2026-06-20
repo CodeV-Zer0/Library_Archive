@@ -206,6 +206,23 @@ app.delete('/api/students/:register_number', authenticateToken, isAdmin, async (
 });
 
 // --- Transaction & Receipt Routes ---
+app.get('/api/my-receipts', authenticateToken, async (req, res) => {
+    try {
+        const { registerNumber } = req.user;
+        if (!registerNumber) return res.json([]);
+        const sql = `
+            SELECT r.* FROM Receipt r
+            JOIN Book_Transaction bt ON r.Transaction_Id = bt.Transaction_Id
+            WHERE bt.Register_Number = ?
+            ORDER BY r.Generated_time DESC
+        `;
+        const [rows] = await db.query(sql, [registerNumber]);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching my receipts:", err);
+        res.status(500).send("Database error");
+    }
+});
 app.get('/api/transactions/active', authenticateToken, isAdmin, async (req, res) => {
     try {
         const sql = "SELECT * FROM Book_Transaction WHERE Status = 'Issued' ORDER BY Issue_Date DESC";
