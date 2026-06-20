@@ -7,7 +7,7 @@ function ReceiptList() {
     useEffect(() => {
         const fetchReceipts = async () => {
             try {
-                const response = await api.get('http://localhost:3001/api/receipts');
+                const response = await api.get('/receipts');
                 setReceipts(response.data);
             } catch (error) {
                 console.error("Error fetching receipts:", error);

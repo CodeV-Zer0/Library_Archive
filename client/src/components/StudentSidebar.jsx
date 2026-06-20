@@ -14,9 +14,8 @@ function StudentSidebar() {
       <nav>
         <ul>
           <li><Link to="/books">Browse Books</Link></li>
-          
           <li><Link to="/my-transactions">Return a Book</Link></li>
-          
+          <li><Link to="/my-receipts">View My Receipts</Link></li>
           <li><button onClick={handleLogout} className="logout-button">Logout</button></li>
         </ul>
       </nav>

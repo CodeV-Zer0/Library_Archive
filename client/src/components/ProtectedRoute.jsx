@@ -7,9 +7,19 @@ const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
 
     if (token) {
-        const user = jwtDecode(token);
-        if (user.role === 'admin') {
-            return children; // If user is admin, show the page
+        try {
+            const user = jwtDecode(token);
+            const expiresAt = user.exp ? user.exp * 1000 : 0;
+            if (expiresAt && expiresAt < Date.now()) {
+                localStorage.removeItem('token');
+                return <Navigate to="/login" replace />;
+            }
+            if ((user.role || '').toLowerCase() === 'admin') {
+                return children; // If user is admin, show the page
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            return <Navigate to="/login" replace />;
         }
     }
 

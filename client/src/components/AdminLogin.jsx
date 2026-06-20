@@ -27,8 +27,7 @@ function AdminLogin() {
 
             const decodedUser = jwtDecode(token);
 
-            // ✅ FIX 3: Check for 'Admin' (capital A) to match your backend
-            if (decodedUser.role !== 'admin') {
+            if ((decodedUser.role || '').toLowerCase() !== 'admin') {
                 setMessage('Access Denied. You are not an admin.');
                 return;
             }

@@ -18,7 +18,9 @@ app.use(cors({
         'http://127.0.0.1:5173',                    // Alternative localhost
         'https://library-archive-client.onrender.com' // ← Your Render frontend URL
     ],
-    credentials: true
+    credentials: true,
+    exposedHeaders: ['Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -296,6 +298,28 @@ app.get('/api/receipts', authenticateToken, isAdmin, async (req, res) => {
         const [rows] = await db.query('SELECT * FROM Receipt ORDER BY Generated_time DESC');
         res.json(rows);
     } catch (err) {
+        res.status(500).send("Database error");
+    }
+});
+
+app.get('/api/my-receipts', authenticateToken, async (req, res) => {
+    try {
+        const { registerNumber } = req.user;
+        if (!registerNumber) {
+            return res.status(400).send('No register number associated with this user.');
+        }
+
+        const sql = `
+            SELECT r.*
+            FROM Receipt r
+            JOIN Book_Transaction bt ON r.Transaction_Id = bt.Transaction_Id
+            WHERE bt.Register_Number = ?
+            ORDER BY r.Generated_time DESC
+        `;
+        const [rows] = await db.query(sql, [registerNumber]);
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching my receipts:', err);
         res.status(500).send("Database error");
     }
 });

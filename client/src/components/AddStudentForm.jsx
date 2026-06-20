@@ -16,7 +16,7 @@ function AddStudentForm({ onStudentAdded }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post('http://localhost:3001/api/students', formData);
+            await api.post('/students', formData);
             alert('Student added successfully!');
             onStudentAdded(); // This function will refresh the student list
             // Clear the form

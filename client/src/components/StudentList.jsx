@@ -7,8 +7,7 @@ function StudentList() {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                // Fetch data from the students API endpoint
-                const response = await api.get('http://localhost:3001/api/students');
+                const response = await api.get('/students');
                 setStudents(response.data);
             } catch (error) {
                 console.error("Error fetching students:", error);

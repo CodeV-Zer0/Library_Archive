@@ -17,8 +17,7 @@ function IssueBookForm() {
         e.preventDefault();
         setMessage(''); // Clear previous messages
         try {
-            // This endpoint will be created in the next step
-            await api.post('http://localhost:3001/api/transactions', formData);
+            await api.post('/transactions', formData);
             setMessage('Book issued successfully!');
             // Clear the form
             setFormData({ ISBN: '', Register_Number: '' });

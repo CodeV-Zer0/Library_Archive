@@ -6,8 +6,7 @@ function TransactionList() {
 
     const fetchTransactions = async () => {
         try {
-            // You will need to create this GET endpoint in your back-end
-            const response = await api.get('http://localhost:3001/api/transactions/active');
+            const response = await api.get('/transactions/active');
             setTransactions(response.data);
         } catch (error) {
             console.error("Error fetching transactions:", error);
@@ -20,7 +19,7 @@ function TransactionList() {
 
     const handleReturn = async (transactionId) => {
         try {
-            await api.put(`http://localhost:3001/api/transactions/${transactionId}`);
+            await api.put(`/transactions/${transactionId}`);
             alert('Book returned!');
             fetchTransactions(); // Refresh the list
         } catch (error) {
@@ -30,7 +29,7 @@ function TransactionList() {
     };
     const handlePayFine = async (transactionId) => {
     try {
-        await api.put(`http://localhost:3001/api/transactions/${transactionId}/pay`);
+        await api.put(`/transactions/${transactionId}/pay`);
         alert('Fine Paid!');
         fetchTransactions(); // Refresh the list
     } catch (error) {
